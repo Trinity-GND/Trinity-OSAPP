@@ -7,6 +7,7 @@ import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
+import CsvTools from "./csv-tools";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All" },
@@ -151,6 +152,9 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
         {selected.size > 0 && (
           <span className="text-sm text-gray-500">{selected.size} selected</span>
         )}
+        <div className="ml-auto">
+          <CsvTools onImported={load} />
+        </div>
       </div>
 
       {loadError && (
