@@ -9,6 +9,16 @@ export async function GET() {
   const service = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const secret = process.env.SESSION_SECRET;
 
+  function findBadChars(name: string, value: string | undefined) {
+    if (!value) return [];
+    const bad: { index: number; code: number; char: string }[] = [];
+    for (let i = 0; i < value.length; i++) {
+      const code = value.charCodeAt(i);
+      if (code > 255) bad.push({ index: i, code, char: value[i] });
+    }
+    return bad.map((b) => ({ var: name, ...b }));
+  }
+
   const info: Record<string, unknown> = {
     urlPresent: !!url,
     urlPrefix: url?.slice(0, 30) ?? null,
@@ -17,6 +27,12 @@ export async function GET() {
     serviceKeyPresent: !!service,
     serviceKeyLength: service?.length ?? 0,
     sessionSecretPresent: !!secret,
+    badChars: [
+      ...findBadChars("url", url),
+      ...findBadChars("anon", anon),
+      ...findBadChars("service", service),
+      ...findBadChars("secret", secret),
+    ],
   };
 
   try {
