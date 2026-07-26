@@ -25,6 +25,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [printingCards, setPrintingCards] = useState(false);
 
   const [advancing, setAdvancing] = useState<{ order: Order; stage: Stage } | null>(null);
   const [confirming, setConfirming] = useState<{ order: Order; stage: Stage } | null>(null);
@@ -96,6 +97,41 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
     setReturning(null);
   }
 
+  async function printSelectedJobCards() {
+    setPrintingCards(true);
+    setActionError(null);
+    try {
+      const res = await fetch("/api/job-cards/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selected) }),
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error ?? "Failed to build job cards");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      // A real anchor click, not window.open() -- the spec flagged past
+      // breakage from window.open()/print() being restricted in sandboxed
+      // contexts, and this is the same pattern already proven reliable
+      // for the Shipping Sheet download above.
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.download = "trinity-os-job-cards.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    } catch (e) {
+      setActionError(e instanceof Error ? e.message : "Failed to build job cards");
+    } finally {
+      setPrintingCards(false);
+    }
+  }
+
   function toggleSelected(id: string) {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -150,7 +186,16 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
           />
         </div>
         {selected.size > 0 && (
-          <span className="text-sm text-gray-500">{selected.size} selected</span>
+          <>
+            <span className="text-sm text-gray-500">{selected.size} selected</span>
+            <button
+              onClick={printSelectedJobCards}
+              disabled={printingCards}
+              className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+            >
+              {printingCards ? "Preparing..." : "Print Selected Job Cards"}
+            </button>
+          </>
         )}
         <div className="ml-auto">
           <CsvTools onImported={load} />

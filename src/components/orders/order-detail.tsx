@@ -105,10 +105,18 @@ export default function OrderDetail({
     <div className="max-w-3xl mx-auto p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{order.id}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <span className="text-sm text-gray-500">
             {statusLabel(order)} · Delay: {delayLabel(order)}
           </span>
+          <a
+            href={`/api/job-cards/${order.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100"
+          >
+            Print Job Card
+          </a>
         </div>
       </div>
 
