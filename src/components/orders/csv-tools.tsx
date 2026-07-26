@@ -8,6 +8,37 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [sheetMessage, setSheetMessage] = useState<string | null>(null);
+  const [sheetLoading, setSheetLoading] = useState(false);
+
+  async function downloadShippingSheet() {
+    setSheetLoading(true);
+    setSheetMessage(null);
+    try {
+      const res = await fetch("/api/orders/shipping-sheet");
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Failed to build shipping sheet");
+
+      const blob = new Blob([body.csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `trinity-os-shipping-sheet-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      setSheetMessage(
+        body.skipped > 0
+          ? `Downloaded — skipped ${body.skipped} order(s) without Final Weight.`
+          : `Downloaded ${body.included} order(s).`,
+      );
+    } catch (e) {
+      setSheetMessage(e instanceof Error ? e.message : "Failed to build shipping sheet");
+    } finally {
+      setSheetLoading(false);
+    }
+  }
+
   async function handleFile(file: File) {
     setImporting(true);
     setError(null);
@@ -44,6 +75,14 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
       >
         {importing ? "Importing..." : "Import CSV"}
       </button>
+      <button
+        type="button"
+        onClick={downloadShippingSheet}
+        disabled={sheetLoading}
+        className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+      >
+        {sheetLoading ? "Building..." : "Shipping Sheet"}
+      </button>
       <input
         ref={inputRef}
         type="file"
@@ -56,6 +95,7 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
       />
       {message && <span className="text-xs text-green-700">{message}</span>}
       {error && <span className="text-xs text-red-600">{error}</span>}
+      {sheetMessage && <span className="text-xs text-gray-600">{sheetMessage}</span>}
     </div>
   );
 }
