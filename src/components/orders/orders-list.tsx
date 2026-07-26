@@ -6,7 +6,7 @@ import { Order, STAGES, STAGE_LABELS, Stage } from "@/types/order";
 import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
-import ConfirmModal from "./confirm-modal";
+import ConfirmModal from "@/components/ui/confirm-modal";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All" },
