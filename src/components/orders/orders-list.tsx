@@ -8,6 +8,7 @@ import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import CsvTools from "./csv-tools";
+import OrdersReportButton from "./orders-report-button";
 
 const STATUS_OPTIONS = [
   { value: "all", label: "All" },
@@ -197,7 +198,8 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
             </button>
           </>
         )}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <OrdersReportButton selectedIds={Array.from(selected)} />
           <CsvTools onImported={load} />
         </div>
       </div>
