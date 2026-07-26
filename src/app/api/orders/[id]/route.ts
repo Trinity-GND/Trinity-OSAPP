@@ -4,6 +4,8 @@ import { requireSession } from "@/lib/auth/require";
 import { rowToOrder, orderToRow } from "@/lib/orders/map";
 import { presentOrder } from "@/lib/orders/present";
 import { parseShippingAddress } from "@/lib/address-parser";
+import { computeCosting } from "@/lib/costing";
+import { getLaborRate } from "@/lib/settings";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireSession();
@@ -17,7 +19,14 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ order: presentOrder(rowToOrder(data), session.role) });
+  const order = rowToOrder(data);
+  let costing = null;
+  if (session.role === "owner") {
+    const laborRate = await getLaborRate(supabase);
+    costing = computeCosting(order, laborRate);
+  }
+
+  return NextResponse.json({ order: presentOrder(order, session.role), costing });
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
