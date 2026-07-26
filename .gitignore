@@ -38,6 +38,7 @@ yarn-error.log*
 
 # claude code local settings
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
 
 # local-only seed data (contains real PINs, never commit)
 /seed-data/

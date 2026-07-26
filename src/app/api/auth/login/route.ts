@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
     .eq("active", true);
 
   if (error) {
+    console.error("Login query failed:", error.message);
     return NextResponse.json({ error: "Login is temporarily unavailable" }, { status: 500 });
   }
 
