@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import TeamPanel from "./team-panel";
 import AccessLogPanel from "./access-log-panel";
+import PayrollPanel from "./payroll-panel";
 
 type ReportData = {
   summary: {
@@ -202,6 +203,13 @@ export default function ReportsView() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+          Monthly Expenses &amp; Payroll
+        </h2>
+        <PayrollPanel />
       </section>
 
       <section className="space-y-2">
