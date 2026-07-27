@@ -18,12 +18,14 @@ type DashboardData = {
 export default function DashboardView() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "online" | "offline">("all");
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const res = await fetch("/api/dashboard");
+        const params = filter !== "all" ? `?orderType=${filter}` : "";
+        const res = await fetch(`/api/dashboard${params}`);
         if (!res.ok) throw new Error();
         const body = await res.json();
         if (!cancelled) {
@@ -38,7 +40,7 @@ export default function DashboardView() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [filter]);
 
   if (!data) {
     return <p className="p-6 text-muted">{error ?? "Loading..."}</p>;
@@ -46,7 +48,22 @@ export default function DashboardView() {
 
   return (
     <div className="p-4 sm:p-6 space-y-6">
-      <h1 className="font-display text-2xl font-bold text-ink">Dashboard</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold text-ink">Dashboard</h1>
+        <div className="inline-flex rounded-md border border-border-warm overflow-hidden">
+          {(["all", "online", "offline"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 text-sm capitalize ${
+                filter === f ? "bg-gold text-navy font-medium" : "bg-card text-ink hover:bg-cream"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error && (
         <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">

@@ -3,6 +3,7 @@ import { Order } from "@/types/order";
 // All order fields except imagePath, which doesn't belong in CSV per spec.
 const COLUMNS: (keyof Order)[] = [
   "id",
+  "orderType",
   "employee",
   "brand",
   "marketplace",

@@ -18,7 +18,8 @@ export default async function Sidebar() {
 
       <nav className="flex sm:flex-col gap-1 p-2 sm:p-3 flex-1 overflow-x-auto sm:overflow-visible">
         <SidebarNavLink href="/dashboard">Dashboard</SidebarNavLink>
-        <SidebarNavLink href="/orders">Orders</SidebarNavLink>
+        <SidebarNavLink href="/orders?orderType=online">Online Orders</SidebarNavLink>
+        <SidebarNavLink href="/orders?orderType=offline">Offline Orders</SidebarNavLink>
         {session.role === "owner" && <SidebarNavLink href="/reports">Reports</SidebarNavLink>}
       </nav>
 

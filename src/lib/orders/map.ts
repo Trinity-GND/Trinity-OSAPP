@@ -4,6 +4,7 @@ import { Order } from "@/types/order";
 export function rowToOrder(row: Record<string, unknown>): Order {
   return {
     id: row.id as string,
+    orderType: (row.order_type as Order["orderType"]) ?? "online",
     employee: row.employee as string | null,
     brand: row.brand as string | null,
     marketplace: row.marketplace as Order["marketplace"],
@@ -57,6 +58,7 @@ export function rowToOrder(row: Record<string, unknown>): Order {
 export function orderToRow(order: Partial<Order>): Record<string, unknown> {
   const row: Record<string, unknown> = {};
   const map: Record<string, string> = {
+    orderType: "order_type",
     employee: "employee",
     brand: "brand",
     marketplace: "marketplace",

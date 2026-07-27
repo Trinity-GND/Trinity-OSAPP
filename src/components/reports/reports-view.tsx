@@ -25,10 +25,12 @@ export default function ReportsView() {
   const [laborRateInput, setLaborRateInput] = useState("");
   const [savingRate, setSavingRate] = useState(false);
   const [rateSaved, setRateSaved] = useState(false);
+  const [filter, setFilter] = useState<"all" | "online" | "offline">("all");
 
   async function load() {
     try {
-      const res = await fetch("/api/reports");
+      const params = filter !== "all" ? `?orderType=${filter}` : "";
+      const res = await fetch(`/api/reports${params}`);
       if (!res.ok) throw new Error();
       const body = await res.json();
       setData(body);
@@ -41,7 +43,8 @@ export default function ReportsView() {
 
   useEffect(() => {
     load();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
 
   async function saveLaborRate() {
     setSavingRate(true);
@@ -68,7 +71,22 @@ export default function ReportsView() {
 
   return (
     <div className="p-4 sm:p-6 space-y-8 max-w-5xl mx-auto">
-      <h1 className="font-display text-2xl font-bold text-ink">Reports</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold text-ink">Reports</h1>
+        <div className="inline-flex rounded-md border border-border-warm overflow-hidden">
+          {(["all", "online", "offline"] as const).map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 text-sm capitalize ${
+                filter === f ? "bg-gold text-navy font-medium" : "bg-card text-ink hover:bg-cream"
+              }`}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {error && (
         <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">

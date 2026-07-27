@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { parseShippingAddress } from "@/lib/address-parser";
-import { Order } from "@/types/order";
+import { Order, OrderType } from "@/types/order";
 import ImageUpload from "./image-upload";
 
 const MARKETPLACES = ["Etsy", "Amazon", "Shopify", "Walmart", "eBay", "Instagram-DM", "Other"];
@@ -19,6 +19,7 @@ function todayISO() {
 export default function OrderForm({
   role,
   defaultEmployee,
+  defaultOrderType = "online",
   mode = "create",
   orderId,
   initialOrder,
@@ -26,6 +27,7 @@ export default function OrderForm({
 }: {
   role: "owner" | "employee";
   defaultEmployee: string;
+  defaultOrderType?: OrderType;
   mode?: "create" | "edit";
   orderId?: string;
   initialOrder?: Order;
@@ -33,6 +35,7 @@ export default function OrderForm({
 }) {
   const router = useRouter();
 
+  const [orderType, setOrderType] = useState<OrderType>(initialOrder?.orderType ?? defaultOrderType);
   const [employee, setEmployee] = useState(initialOrder?.employee ?? defaultEmployee);
   const [brand, setBrand] = useState(initialOrder?.brand ?? "");
   const [marketplace, setMarketplace] = useState<string>(initialOrder?.marketplace ?? "Etsy");
@@ -88,6 +91,7 @@ export default function OrderForm({
     setSaved(false);
 
     const payload: Record<string, unknown> = {
+      orderType,
       employee,
       brand,
       marketplace,
@@ -145,6 +149,29 @@ export default function OrderForm({
     >
       <section className="space-y-3">
         <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Order Info</h2>
+        <div>
+          <span className="text-xs text-muted block mb-1">Order Type</span>
+          <div className="inline-flex rounded-md border border-border-warm overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setOrderType("online")}
+              className={`px-4 py-1.5 text-sm ${
+                orderType === "online" ? "bg-gold text-navy font-medium" : "bg-cream text-ink hover:bg-border-warm/30"
+              }`}
+            >
+              Online
+            </button>
+            <button
+              type="button"
+              onClick={() => setOrderType("offline")}
+              className={`px-4 py-1.5 text-sm ${
+                orderType === "offline" ? "bg-gold text-navy font-medium" : "bg-cream text-ink hover:bg-border-warm/30"
+              }`}
+            >
+              Offline
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Employee">
             <input className="input" value={employee} onChange={(e) => setEmployee(e.target.value)} />

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function SidebarNavLink({
   href,
@@ -11,7 +11,12 @@ export default function SidebarNavLink({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+  const searchParams = useSearchParams();
+
+  const [hrefPath, hrefQuery] = href.split("?");
+  const active = hrefQuery
+    ? pathname === hrefPath && searchParams.toString() === hrefQuery
+    : pathname === hrefPath || (hrefPath !== "/dashboard" && pathname.startsWith(hrefPath));
 
   return (
     <Link

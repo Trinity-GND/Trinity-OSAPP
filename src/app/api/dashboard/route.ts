@@ -1,16 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth/require";
 import { rowToOrder } from "@/lib/orders/map";
 import { presentOrders } from "@/lib/orders/present";
 import { getDelayInfo } from "@/lib/orders/delay";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await requireSession();
   if (session instanceof NextResponse) return session;
 
+  const orderType = new URL(req.url).searchParams.get("orderType");
+
   const supabase = getServiceSupabase();
-  const { data, error } = await supabase.from("orders").select("*").eq("cancelled", false);
+  let query = supabase.from("orders").select("*").eq("cancelled", false);
+  if (orderType === "online" || orderType === "offline") {
+    query = query.eq("order_type", orderType);
+  }
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

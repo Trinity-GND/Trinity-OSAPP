@@ -13,6 +13,7 @@ export type StoneQuality = "Cubic Zirconia" | "Moissanite" | "Lab Grown" | "Natu
 export type Priority = "Normal" | "High" | "Urgent";
 export type Stage = "cad" | "cam" | "casting" | "inProduction" | "readyToDispatch" | "dispatched";
 export type RefundType = "none" | "full" | "partial";
+export type OrderType = "online" | "offline";
 
 export const STAGES: Stage[] = [
   "cad",
@@ -36,6 +37,7 @@ export type StageTimestamps = Partial<Record<Stage, string>>;
 
 export type Order = {
   id: string;
+  orderType: OrderType;
   employee: string | null;
   brand: string | null;
   marketplace: Marketplace | null;

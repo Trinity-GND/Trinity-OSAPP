@@ -14,10 +14,14 @@ export async function GET(req: NextRequest) {
   const status = searchParams.get("status"); // stage value, "cancelled", "all", or null
   const dateFrom = searchParams.get("dateFrom");
   const dateTo = searchParams.get("dateTo");
+  const orderType = searchParams.get("orderType"); // "online", "offline", "all", or null
 
   const supabase = getServiceSupabase();
   let query = supabase.from("orders").select("*").order("created_at", { ascending: false });
 
+  if (orderType === "online" || orderType === "offline") {
+    query = query.eq("order_type", orderType);
+  }
   if (search) {
     const like = `%${search}%`;
     query = query.or(
@@ -60,6 +64,7 @@ export async function POST(req: NextRequest) {
   if (!body.employee) body.employee = session.name;
   if (!body.quantity) body.quantity = 1;
   if (!body.priority) body.priority = "Normal";
+  if (body.orderType !== "online" && body.orderType !== "offline") body.orderType = "online";
 
   // materialCost must never be settable by an employee session, even if sent.
   if (session.role !== "owner") {

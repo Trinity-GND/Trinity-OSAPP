@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Order, STAGES, STAGE_LABELS, Stage } from "@/types/order";
+import { Order, OrderType, STAGES, STAGE_LABELS, Stage } from "@/types/order";
 import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
@@ -19,7 +19,7 @@ const STATUS_OPTIONS = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
-export default function OrdersList({ role }: { role: "owner" | "employee" }) {
+export default function OrdersList({ role, orderType }: { role: "owner" | "employee"; orderType: OrderType }) {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,6 +40,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
   const load = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams();
+    params.set("orderType", orderType);
     if (search) params.set("search", search);
     if (status !== "all") params.set("status", status);
     if (dateFrom) params.set("dateFrom", dateFrom);
@@ -57,7 +58,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
     } finally {
       setLoading(false);
     }
-  }, [search, status, dateFrom, dateTo]);
+  }, [orderType, search, status, dateFrom, dateTo]);
 
   useEffect(() => {
     const t = setTimeout(load, 250);
@@ -149,9 +150,11 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
   return (
     <div className="p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold text-ink">Orders</h1>
+        <h1 className="font-display text-2xl font-bold text-ink">
+          {orderType === "online" ? "Online Orders" : "Offline Orders"}
+        </h1>
         <button
-          onClick={() => router.push("/orders/new")}
+          onClick={() => router.push(`/orders/new?orderType=${orderType}`)}
           className="px-4 py-2 rounded-lg bg-gold text-navy text-sm font-medium hover:bg-gold-dark"
         >
           + New Order
