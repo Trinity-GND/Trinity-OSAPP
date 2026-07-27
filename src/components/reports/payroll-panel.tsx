@@ -121,25 +121,25 @@ export default function PayrollPanel() {
 
   return (
     <div className="space-y-4">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <div className="flex items-center gap-3">
-        <button onClick={() => changeMonth(-1)} className="px-2 py-1 border rounded hover:bg-gray-100">
+        <button onClick={() => changeMonth(-1)} className="px-2 py-1 border border-border-warm bg-card rounded-md hover:bg-cream">
           ←
         </button>
         <span className="text-sm font-medium">
           {MONTH_NAMES[month - 1]} {year}
         </span>
-        <button onClick={() => changeMonth(1)} className="px-2 py-1 border rounded hover:bg-gray-100">
+        <button onClick={() => changeMonth(1)} className="px-2 py-1 border border-border-warm bg-card rounded-md hover:bg-cream">
           →
         </button>
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Payroll (₹)</h3>
-        <div className="border rounded overflow-x-auto">
+        <h3 className="text-xs font-semibold text-muted uppercase mb-2">Payroll (₹)</h3>
+        <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs text-gray-500">
+            <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
               <tr>
                 <th className="p-2">Name</th>
                 <th className="p-2">Monthly Salary</th>
@@ -156,10 +156,10 @@ export default function PayrollPanel() {
               {payroll.map((e) => {
                 const c = computed(e);
                 return (
-                  <tr key={e.id} className="border-t">
+                  <tr key={e.id} className="border-t border-border-warm">
                     <td className="p-1">
                       <input
-                        className="border rounded px-1 py-0.5 text-sm w-28"
+                        className="border border-border-warm bg-cream rounded-md px-1 py-0.5 text-sm w-28 focus:outline-none focus:ring-1 focus:ring-gold"
                         defaultValue={e.name}
                         onBlur={(ev) => updatePayrollRow(e.id, { name: ev.target.value })}
                       />
@@ -180,7 +180,7 @@ export default function PayrollPanel() {
                     <td className="p-2">₹{c.amount.toFixed(2)}</td>
                     <td className="p-2 font-medium">₹{c.payable.toFixed(2)}</td>
                     <td className="p-2">
-                      <button onClick={() => removePayrollRow(e.id)} className="text-xs text-red-600 hover:underline">
+                      <button onClick={() => removePayrollRow(e.id)} className="text-xs text-danger hover:underline">
                         Remove
                       </button>
                     </td>
@@ -190,16 +190,16 @@ export default function PayrollPanel() {
             </tbody>
           </table>
         </div>
-        <button onClick={addPayrollRow} className="mt-2 text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100">
+        <button onClick={addPayrollRow} className="mt-2 text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream">
           + Add Person
         </button>
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Operating Expenses (₹)</h3>
-        <div className="border rounded overflow-x-auto">
+        <h3 className="text-xs font-semibold text-muted uppercase mb-2">Operating Expenses (₹)</h3>
+        <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs text-gray-500">
+            <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
               <tr>
                 <th className="p-2">Category</th>
                 <th className="p-2">Amount</th>
@@ -208,10 +208,10 @@ export default function PayrollPanel() {
             </thead>
             <tbody>
               {expenses.map((e) => (
-                <tr key={e.id} className="border-t">
+                <tr key={e.id} className="border-t border-border-warm">
                   <td className="p-1">
                     <input
-                      className="border rounded px-1 py-0.5 text-sm w-40"
+                      className="border border-border-warm bg-cream rounded-md px-1 py-0.5 text-sm w-40 focus:outline-none focus:ring-1 focus:ring-gold"
                       defaultValue={e.category}
                       onBlur={(ev) => updateExpenseRow(e.id, { category: ev.target.value })}
                     />
@@ -220,7 +220,7 @@ export default function PayrollPanel() {
                     <NumInput value={e.amount} onCommit={(v) => updateExpenseRow(e.id, { amount: v })} />
                   </td>
                   <td className="p-2">
-                    <button onClick={() => removeExpenseRow(e.id)} className="text-xs text-red-600 hover:underline">
+                    <button onClick={() => removeExpenseRow(e.id)} className="text-xs text-danger hover:underline">
                       Remove
                     </button>
                   </td>
@@ -229,23 +229,23 @@ export default function PayrollPanel() {
             </tbody>
           </table>
         </div>
-        <button onClick={addExpenseRow} className="mt-2 text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100">
+        <button onClick={addExpenseRow} className="mt-2 text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream">
           + Add Expense
         </button>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="border rounded p-3">
-          <p className="text-xs text-gray-500">Payroll Total</p>
-          <p className="text-lg font-semibold">₹{payrollTotal.toFixed(2)}</p>
+        <div className="bg-card border border-border-warm rounded-lg p-3">
+          <p className="text-xs text-muted uppercase tracking-wide">Payroll Total</p>
+          <p className="font-display text-lg font-bold text-ink">₹{payrollTotal.toFixed(2)}</p>
         </div>
-        <div className="border rounded p-3">
-          <p className="text-xs text-gray-500">Operating Total</p>
-          <p className="text-lg font-semibold">₹{expensesTotal.toFixed(2)}</p>
+        <div className="bg-card border border-border-warm rounded-lg p-3">
+          <p className="text-xs text-muted uppercase tracking-wide">Operating Total</p>
+          <p className="font-display text-lg font-bold text-ink">₹{expensesTotal.toFixed(2)}</p>
         </div>
-        <div className="border rounded p-3">
-          <p className="text-xs text-gray-500">Grand Total</p>
-          <p className="text-lg font-semibold">₹{grandTotal.toFixed(2)}</p>
+        <div className="bg-card border border-border-warm rounded-lg p-3">
+          <p className="text-xs text-muted uppercase tracking-wide">Grand Total</p>
+          <p className="font-display text-lg font-bold text-ink">₹{grandTotal.toFixed(2)}</p>
         </div>
       </div>
     </div>
@@ -273,7 +273,7 @@ function NumInput({ value, onCommit }: { value: number; onCommit: (v: number) =>
   return (
     <input
       type="number"
-      className="border rounded px-1 py-0.5 text-sm w-24"
+      className="border border-border-warm bg-cream rounded-md px-1 py-0.5 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-gold"
       value={local}
       onChange={(e) => setLocal(e.target.value)}
       onBlur={() => onCommit(Number(local) || 0)}

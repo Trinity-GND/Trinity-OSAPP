@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Order, STAGES, STAGE_LABELS, Stage } from "@/types/order";
 import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import ReturnModal from "./return-modal";
@@ -19,6 +20,7 @@ const STATUS_OPTIONS = [
 ];
 
 export default function OrdersList({ role }: { role: "owner" | "employee" }) {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -145,21 +147,31 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-4 sm:p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold text-ink">Orders</h1>
+        <button
+          onClick={() => router.push("/orders/new")}
+          className="px-4 py-2 rounded-lg bg-gold text-navy text-sm font-medium hover:bg-gold-dark"
+        >
+          + New Order
+        </button>
+      </div>
+
       <div className="flex flex-wrap gap-3 items-end">
         <div>
-          <label className="block text-xs text-gray-500">Search</label>
+          <label className="block text-xs text-muted mb-1">Search</label>
           <input
-            className="border rounded px-3 py-1.5 text-sm w-64"
+            className="border border-border-warm bg-card rounded-md px-3 py-1.5 text-sm w-64 focus:outline-none focus:ring-1 focus:ring-gold"
             placeholder="Job ID, buyer, brand, platform order #"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500">Status</label>
+          <label className="block text-xs text-muted mb-1">Status</label>
           <select
-            className="border rounded px-3 py-1.5 text-sm"
+            className="border border-border-warm bg-card rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             value={status}
             onChange={(e) => setStatus(e.target.value)}
           >
@@ -171,30 +183,30 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-500">Order date from</label>
+          <label className="block text-xs text-muted mb-1">Order date from</label>
           <input
             type="date"
-            className="border rounded px-3 py-1.5 text-sm"
+            className="border border-border-warm bg-card rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500">to</label>
+          <label className="block text-xs text-muted mb-1">to</label>
           <input
             type="date"
-            className="border rounded px-3 py-1.5 text-sm"
+            className="border border-border-warm bg-card rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
           />
         </div>
         {selected.size > 0 && (
           <>
-            <span className="text-sm text-gray-500">{selected.size} selected</span>
+            <span className="text-sm text-muted">{selected.size} selected</span>
             <button
               onClick={printSelectedJobCards}
               disabled={printingCards}
-              className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+              className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream disabled:opacity-50"
             >
               {printingCards ? "Preparing..." : "Print Selected Job Cards"}
             </button>
@@ -207,19 +219,19 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
       </div>
 
       {loadError && (
-        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+        <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">
           {loadError}
         </p>
       )}
       {actionError && (
-        <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+        <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">
           {actionError}
         </p>
       )}
 
-      <div className="overflow-x-auto border rounded">
+      <div className="overflow-x-auto border border-border-warm rounded-lg bg-card">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-left text-xs text-gray-500">
+          <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
             <tr>
               <th className="p-2 w-8"></th>
               <th className="p-2 w-14">Photo</th>
@@ -240,14 +252,14 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
           <tbody>
             {loading && orders.length === 0 && (
               <tr>
-                <td colSpan={14} className="p-4 text-center text-gray-400">
+                <td colSpan={14} className="p-4 text-center text-muted">
                   Loading...
                 </td>
               </tr>
             )}
             {!loading && orders.length === 0 && (
               <tr>
-                <td colSpan={14} className="p-4 text-center text-gray-400">
+                <td colSpan={14} className="p-4 text-center text-muted">
                   No orders yet.
                 </td>
               </tr>
@@ -255,7 +267,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
             {orders.map((order) => {
               const next = nextStage(order);
               return (
-                <tr key={order.id} className="border-t">
+                <tr key={order.id} className="border-t border-border-warm">
                   <td className="p-2">
                     <input
                       type="checkbox"
@@ -268,11 +280,11 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={order.imagePath} alt="" className="w-10 h-10 object-cover rounded" />
                     ) : (
-                      <div className="w-10 h-10 rounded bg-gray-100" />
+                      <div className="w-10 h-10 rounded bg-cream" />
                     )}
                   </td>
                   <td className="p-2 font-medium">
-                    <Link href={`/orders/${order.id}`} className="hover:underline">
+                    <Link href={`/orders/${order.id}`} className="hover:underline text-ink">
                       {order.id}
                     </Link>
                   </td>
@@ -286,22 +298,32 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
                     {!order.returned && !order.cancelled ? (
                       <button
                         onClick={() => setReturning(order)}
-                        className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100"
+                        className="text-xs px-2 py-1 rounded-md border border-border-warm hover:bg-cream"
                       >
                         Mark Returned
                       </button>
                     ) : order.returned ? (
-                      <span className="text-xs text-gray-500">Returned</span>
+                      <span className="text-xs text-muted">Returned</span>
                     ) : (
                       "—"
                     )}
                   </td>
-                  <td className="p-2">{delayLabel(order)}</td>
+                  <td className="p-2">
+                    <span
+                      className={
+                        delayLabel(order) === "Overdue" || delayLabel(order).includes("late")
+                          ? "text-danger font-medium"
+                          : ""
+                      }
+                    >
+                      {delayLabel(order)}
+                    </span>
+                  </td>
                   <td className="p-2">
                     {next && !order.returned ? (
                       <button
                         onClick={() => requestAdvance(order)}
-                        className="text-xs px-2 py-1 rounded bg-black text-white hover:bg-gray-800"
+                        className="text-xs px-2 py-1 rounded-md bg-gold text-navy font-medium hover:bg-gold-dark"
                       >
                         → {STAGE_LABELS[next]}
                       </button>
@@ -312,7 +334,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
                   <td className="p-2">
                     <Link
                       href={`/orders/${order.id}`}
-                      className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100"
+                      className="text-xs px-2 py-1 rounded-md border border-border-warm hover:bg-cream"
                     >
                       View
                     </Link>
@@ -321,7 +343,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
                     <td className="p-2">
                       <button
                         onClick={() => setDeleting(order)}
-                        className="text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50"
+                        className="text-xs px-2 py-1 rounded-md border border-danger/30 text-danger hover:bg-danger-bg"
                       >
                         Delete
                       </button>

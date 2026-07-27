@@ -48,7 +48,7 @@ export default function OrdersReportButton({ selectedIds }: { selectedIds: strin
   return (
     <div className="flex items-center gap-2">
       <select
-        className="border rounded px-2 py-1.5 text-xs"
+        className="border border-border-warm bg-card rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-gold"
         value={preset}
         onChange={(e) => setPreset(e.target.value)}
       >
@@ -62,11 +62,11 @@ export default function OrdersReportButton({ selectedIds }: { selectedIds: strin
       <button
         onClick={download}
         disabled={loading}
-        className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+        className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream disabled:opacity-50"
       >
         {loading ? "Building..." : "Orders Report"}
       </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs text-danger">{error}</span>}
     </div>
   );
 }

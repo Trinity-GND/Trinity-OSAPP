@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f0e6;
+  --foreground: #2b2620;
+
+  --color-navy: #1c2431;
+  --color-navy-light: #2a3345;
+  --color-gold: #b8935a;
+  --color-gold-dark: #9c7a48;
+  --color-cream: #f5f0e6;
+  --color-card: #fdfbf7;
+  --color-border-warm: #e3d9c6;
+  --color-ink: #2b2620;
+  --color-muted: #8a8272;
+  --color-danger: #b3564f;
+  --color-danger-bg: #fbeceb;
+  --color-success: #5f8768;
+  --color-success-bg: #eaf1ec;
 }
 
 @theme inline {
@@ -10,17 +24,29 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
+  --font-serif: var(--font-serif);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-navy: var(--color-navy);
+  --color-navy-light: var(--color-navy-light);
+  --color-gold: var(--color-gold);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-cream: var(--color-cream);
+  --color-card: var(--color-card);
+  --color-border-warm: var(--color-border-warm);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-serif), Georgia, serif;
 }

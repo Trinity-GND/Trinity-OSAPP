@@ -96,7 +96,7 @@ export default function OrderDetail({
   }
 
   if (notFound) {
-    return <p className="p-6 text-gray-500">Order {orderId} not found.</p>;
+    return <p className="p-6 text-muted">Order {orderId} not found.</p>;
   }
 
   if (!order) {
@@ -106,18 +106,18 @@ export default function OrderDetail({
   const next = nextStage(order);
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{order.id}</h1>
+    <div className="max-w-3xl mx-auto p-4 sm:p-6 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="font-display text-xl font-bold text-ink">{order.id}</h1>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted">
             {statusLabel(order)} · Delay: {delayLabel(order)}
           </span>
           <a
             href={`/api/job-cards/${order.id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100"
+            className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream"
           >
             Print Job Card
           </a>
@@ -125,21 +125,21 @@ export default function OrderDetail({
       </div>
 
       {loadError && (
-        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+        <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">
           {loadError}
         </p>
       )}
       {actionError && (
-        <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+        <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">
           {actionError}
         </p>
       )}
 
-      <div className="flex flex-wrap gap-2 border rounded p-3">
+      <div className="flex flex-wrap gap-2 border border-border-warm bg-card rounded-lg p-3">
         {next && !order.returned && (
           <button
             onClick={requestAdvance}
-            className="text-sm px-3 py-1.5 rounded bg-black text-white hover:bg-gray-800"
+            className="text-sm px-3 py-1.5 rounded-md bg-gold text-navy font-medium hover:bg-gold-dark"
           >
             → {STAGE_LABELS[next]}
           </button>
@@ -147,39 +147,41 @@ export default function OrderDetail({
         {!order.returned && (
           <button
             onClick={() => setReturning(true)}
-            className="text-sm px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100"
+            className="text-sm px-3 py-1.5 rounded-md border border-border-warm hover:bg-cream"
           >
             Mark Returned
           </button>
         )}
         <button
           onClick={toggleCancel}
-          className="text-sm px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100"
+          className="text-sm px-3 py-1.5 rounded-md border border-border-warm hover:bg-cream"
         >
           {order.cancelled ? "Un-cancel Order" : "Cancel Order"}
         </button>
       </div>
 
       {order.returned && (
-        <div className="text-sm border rounded p-3 bg-gray-50 space-y-1">
-          <p className="font-medium">Returned</p>
+        <div className="text-sm border border-border-warm bg-card rounded-lg p-3 space-y-1">
+          <p className="font-medium text-ink">Returned</p>
           <p>Reason: {order.returnReason}</p>
           <p>Refund: {order.refundType}{order.refundAmount != null ? ` — $${order.refundAmount}` : ""}</p>
         </div>
       )}
 
       {role === "owner" && (
-        <div className="text-sm border rounded p-3 space-y-1">
-          <p className="font-medium">Costing</p>
+        <div className="text-sm border border-border-warm bg-card rounded-lg p-3 space-y-1">
+          <p className="font-medium text-ink">Costing</p>
           {costing ? (
             <>
               <p>Unit Cost: ${costing.unitCost.toFixed(2)}</p>
               <p>Total Cost: ${costing.totalCost.toFixed(2)}</p>
-              <p>Profit: ${costing.profit.toFixed(2)}</p>
+              <p className={costing.profit < 0 ? "text-danger font-medium" : "text-success font-medium"}>
+                Profit: ${costing.profit.toFixed(2)}
+              </p>
               <p>Margin: {costing.marginPct != null ? `${costing.marginPct.toFixed(1)}%` : "not set"}</p>
             </>
           ) : (
-            <p className="text-gray-500">not set</p>
+            <p className="text-muted">not set</p>
           )}
         </div>
       )}
@@ -194,16 +196,16 @@ export default function OrderDetail({
       />
 
       {role === "owner" && (
-        <div className="border border-red-200 rounded p-3 flex items-center justify-between">
+        <div className="border border-danger/30 bg-danger-bg rounded-lg p-3 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-red-700">Danger zone</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-sm font-medium text-danger">Danger zone</p>
+            <p className="text-xs text-muted">
               Permanently delete this order. For cleaning up test/trial orders only.
             </p>
           </div>
           <button
             onClick={() => setDeleting(true)}
-            className="text-sm px-3 py-1.5 rounded border border-red-300 text-red-700 hover:bg-red-50"
+            className="text-sm px-3 py-1.5 rounded-md border border-danger/40 text-danger hover:bg-danger/10"
           >
             Delete Order
           </button>

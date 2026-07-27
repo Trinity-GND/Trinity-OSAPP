@@ -63,53 +63,63 @@ export default function ReportsView() {
   }
 
   if (!data) {
-    return <p className="p-6 text-gray-400">{error ?? "Loading..."}</p>;
+    return <p className="p-6 text-muted">{error ?? "Loading..."}</p>;
   }
 
   return (
-    <div className="p-6 space-y-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-8 max-w-5xl mx-auto">
+      <h1 className="font-display text-2xl font-bold text-ink">Reports</h1>
+
       {error && (
-        <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+        <p className="text-sm text-danger bg-danger-bg border border-danger/30 rounded-md px-3 py-2">
           {error}
         </p>
       )}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <Card label="Total Revenue" value={`$${data.summary.totalRevenue.toFixed(2)}`} />
-        <Card label="Total Cost" value={`$${data.summary.totalCost.toFixed(2)}`} />
-        <Card label="Total Profit" value={`$${data.summary.totalProfit.toFixed(2)}`} />
-        <Card label="Total Refunded" value={`$${data.summary.totalRefunded.toFixed(2)}`} />
-        <Card label="Orders Overdue" value={String(data.summary.ordersOverdue)} highlight={data.summary.ordersOverdue > 0} />
+        <Card label="Total Revenue" value={`$${data.summary.totalRevenue.toFixed(2)}`} accent="gold" />
+        <Card label="Total Cost" value={`$${data.summary.totalCost.toFixed(2)}`} accent="gold" />
+        <Card
+          label="Total Profit"
+          value={`$${data.summary.totalProfit.toFixed(2)}`}
+          accent={data.summary.totalProfit < 0 ? "danger" : "success"}
+        />
+        <Card label="Total Refunded" value={`$${data.summary.totalRefunded.toFixed(2)}`} accent="gold" />
+        <Card
+          label="Orders Overdue"
+          value={String(data.summary.ordersOverdue)}
+          accent={data.summary.ordersOverdue > 0 ? "danger" : "success"}
+        />
       </div>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Labor Rate</h2>
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Labor Rate</h2>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">$</span>
+          <span className="text-sm text-muted">$</span>
           <input
             type="number"
             step="0.01"
-            className="border rounded px-2 py-1 text-sm w-32"
+            className="border border-border-warm bg-card rounded-md px-2 py-1 text-sm w-32 focus:outline-none focus:ring-1 focus:ring-gold"
             value={laborRateInput}
             onChange={(e) => setLaborRateInput(e.target.value)}
           />
-          <span className="text-sm text-gray-500">per gram</span>
+          <span className="text-sm text-muted">per gram</span>
           <button
             onClick={saveLaborRate}
             disabled={savingRate}
-            className="text-sm px-3 py-1.5 rounded bg-black text-white hover:bg-gray-800 disabled:opacity-50"
+            className="text-sm px-3 py-1.5 rounded-md bg-gold text-navy font-medium hover:bg-gold-dark disabled:opacity-50"
           >
             {savingRate ? "Saving..." : "Save"}
           </button>
-          {rateSaved && <span className="text-sm text-green-700">Saved.</span>}
+          {rateSaved && <span className="text-sm text-success">Saved.</span>}
         </div>
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Profit by SKU/Category</h2>
-        <div className="border rounded overflow-x-auto">
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Profit by SKU/Category</h2>
+        <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs text-gray-500">
+            <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
               <tr>
                 <th className="p-2">Item</th>
                 <th className="p-2">Profit</th>
@@ -117,14 +127,20 @@ export default function ReportsView() {
             </thead>
             <tbody>
               {data.profitByItem.map((row) => (
-                <tr key={row.label} className="border-t">
+                <tr key={row.label} className="border-t border-border-warm">
                   <td className="p-2">{row.label}</td>
-                  <td className="p-2">{row.profit != null ? `$${row.profit.toFixed(2)}` : "not set"}</td>
+                  <td
+                    className={`p-2 ${
+                      row.profit != null ? (row.profit < 0 ? "text-danger" : "text-success") : "text-muted"
+                    }`}
+                  >
+                    {row.profit != null ? `$${row.profit.toFixed(2)}` : "not set"}
+                  </td>
                 </tr>
               ))}
               {data.profitByItem.length === 0 && (
                 <tr>
-                  <td colSpan={2} className="p-4 text-center text-gray-400">
+                  <td colSpan={2} className="p-4 text-center text-muted">
                     No orders yet.
                   </td>
                 </tr>
@@ -135,12 +151,12 @@ export default function ReportsView() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
           Production Delay {data.delay.averageDelayDays != null && `(avg ${data.delay.averageDelayDays.toFixed(1)}d)`}
         </h2>
-        <div className="border rounded overflow-x-auto">
+        <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs text-gray-500">
+            <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
               <tr>
                 <th className="p-2">Job ID</th>
                 <th className="p-2">Buyer</th>
@@ -150,16 +166,18 @@ export default function ReportsView() {
             </thead>
             <tbody>
               {data.delay.rows.map((row) => (
-                <tr key={row.id} className="border-t">
+                <tr key={row.id} className="border-t border-border-warm">
                   <td className="p-2">{row.id}</td>
                   <td className="p-2">{row.buyerName ?? "—"}</td>
                   <td className="p-2">{row.shipBy}</td>
-                  <td className="p-2">{row.days > 0 ? `${row.days}d late` : row.days < 0 ? `${-row.days}d early` : "On time"}</td>
+                  <td className={`p-2 ${row.days > 0 ? "text-danger" : ""}`}>
+                    {row.days > 0 ? `${row.days}d late` : row.days < 0 ? `${-row.days}d early` : "On time"}
+                  </td>
                 </tr>
               ))}
               {data.delay.rows.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-4 text-center text-gray-400">
+                  <td colSpan={4} className="p-4 text-center text-muted">
                     No dispatched orders with a ship-by date yet.
                   </td>
                 </tr>
@@ -170,10 +188,10 @@ export default function ReportsView() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Returns & Refunds</h2>
-        <div className="border rounded overflow-x-auto">
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Returns &amp; Refunds</h2>
+        <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-left text-xs text-gray-500">
+            <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
               <tr>
                 <th className="p-2">Job ID</th>
                 <th className="p-2">Buyer</th>
@@ -183,7 +201,7 @@ export default function ReportsView() {
             </thead>
             <tbody>
               {data.returns.map((row) => (
-                <tr key={row.id} className="border-t">
+                <tr key={row.id} className="border-t border-border-warm">
                   <td className="p-2">{row.id}</td>
                   <td className="p-2">{row.buyerName ?? "—"}</td>
                   <td className="p-2">{row.returnReason}</td>
@@ -195,7 +213,7 @@ export default function ReportsView() {
               ))}
               {data.returns.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="p-4 text-center text-gray-400">
+                  <td colSpan={4} className="p-4 text-center text-muted">
                     No returns yet.
                   </td>
                 </tr>
@@ -206,30 +224,44 @@ export default function ReportsView() {
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
           Monthly Expenses &amp; Payroll
         </h2>
         <PayrollPanel />
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Team Access</h2>
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Team Access</h2>
         <TeamPanel />
       </section>
 
       <section className="space-y-2">
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Recent Access Log</h2>
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Recent Access Log</h2>
         <AccessLogPanel />
       </section>
     </div>
   );
 }
 
-function Card({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+const ACCENT_BORDER: Record<string, string> = {
+  gold: "border-l-gold",
+  success: "border-l-success",
+  danger: "border-l-danger",
+};
+
+function Card({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: string;
+  accent: "gold" | "success" | "danger";
+}) {
   return (
-    <div className={`border rounded p-4 ${highlight ? "bg-red-50 border-red-200" : ""}`}>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className={`text-xl font-semibold ${highlight ? "text-red-700" : ""}`}>{value}</p>
+    <div className={`bg-card border border-border-warm border-l-4 ${ACCENT_BORDER[accent]} rounded-lg p-4`}>
+      <p className="text-xs text-muted uppercase tracking-wide font-medium">{label}</p>
+      <p className="font-display text-xl font-bold text-ink mt-1">{value}</p>
     </div>
   );
 }

@@ -28,21 +28,21 @@ export default function ConfirmModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-sm space-y-4">
-        <p className="text-sm">{message}</p>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+      <div className="bg-card rounded-lg p-6 w-full max-w-sm space-y-4 border border-border-warm">
+        <p className="text-sm text-ink">{message}</p>
+        {error && <p className="text-danger text-sm">{error}</p>}
         <div className="flex justify-end gap-2">
           <button
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-100"
+            className="px-4 py-2 text-sm rounded-md border border-border-warm hover:bg-cream"
           >
             Cancel
           </button>
           <button
             onClick={confirm}
             disabled={submitting}
-            className="px-4 py-2 text-sm rounded bg-black text-white hover:bg-gray-800 disabled:opacity-50"
+            className="px-4 py-2 text-sm rounded-md bg-gold text-navy font-medium hover:bg-gold-dark disabled:opacity-50"
           >
             {submitting ? "Saving..." : "Confirm"}
           </button>

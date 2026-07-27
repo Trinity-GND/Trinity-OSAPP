@@ -55,7 +55,7 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => onChange(null)}
-            className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100"
+            className="text-xs px-2 py-1 rounded-md border border-border-warm bg-card hover:bg-cream"
           >
             Remove
           </button>
@@ -71,8 +71,8 @@ export default function ImageUpload({
           }}
           onDragLeave={() => setDragOver(false)}
           onClick={() => inputRef.current?.click()}
-          className={`w-full h-28 border-2 border-dashed rounded flex items-center justify-center text-xs text-gray-500 cursor-pointer ${
-            dragOver ? "border-black bg-gray-50" : "border-gray-300"
+          className={`w-full h-28 border-2 border-dashed rounded-md flex items-center justify-center text-xs text-muted cursor-pointer transition-colors ${
+            dragOver ? "border-gold bg-cream" : "border-border-warm"
           }`}
         >
           {uploading ? "Uploading..." : "Click to upload, drag & drop, or paste (Ctrl+V)"}
@@ -88,7 +88,7 @@ export default function ImageUpload({
           />
         </div>
       )}
-      {error && <p className="text-red-600 text-xs mt-1">{error}</p>}
+      {error && <p className="text-danger text-xs mt-1">{error}</p>}
     </div>
   );
 }

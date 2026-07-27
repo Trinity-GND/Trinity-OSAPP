@@ -31,38 +31,38 @@ export default function DeleteOrderModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-sm space-y-4">
-        <h2 className="text-lg font-semibold text-red-700">Permanently delete {jobId}?</h2>
-        <p className="text-sm text-gray-600">
+      <div className="bg-card rounded-lg p-6 w-full max-w-sm space-y-4 border border-border-warm">
+        <h2 className="font-display text-lg font-bold text-danger">Permanently delete {jobId}?</h2>
+        <p className="text-sm text-muted">
           This cannot be undone — the order, its history, and its photo will be gone for good.
           This is meant for cleaning up test/trial orders, not real customer orders.
         </p>
         <div>
-          <label className="text-sm font-medium">
+          <label className="text-sm font-medium text-ink">
             Type <span className="font-mono">{jobId}</span> to confirm
           </label>
           <input
             autoFocus
-            className="w-full border rounded px-3 py-2 mt-1 text-sm font-mono"
+            className="w-full border border-border-warm bg-cream rounded-md px-3 py-2 mt-1 text-sm font-mono focus:outline-none focus:ring-1 focus:ring-danger"
             value={typed}
             onChange={(e) => setTyped(e.target.value)}
           />
         </div>
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-danger text-sm">{error}</p>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-100"
+            className="px-4 py-2 text-sm rounded-md border border-border-warm hover:bg-cream"
           >
             Cancel
           </button>
           <button
             onClick={confirm}
             disabled={!matches || submitting}
-            className="px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-40"
+            className="px-4 py-2 text-sm rounded-md bg-danger text-white hover:opacity-90 disabled:opacity-40"
           >
             {submitting ? "Deleting..." : "Delete Permanently"}
           </button>

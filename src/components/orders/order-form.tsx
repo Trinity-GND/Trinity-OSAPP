@@ -139,9 +139,12 @@ export default function OrderForm({
   }
 
   return (
-    <form onSubmit={submit} className="max-w-3xl mx-auto p-6 space-y-8">
+    <form
+      onSubmit={submit}
+      className="max-w-3xl mx-auto m-4 sm:m-6 p-6 space-y-8 bg-card border border-border-warm rounded-lg"
+    >
       <section className="space-y-3">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Order Info</h2>
+        <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Order Info</h2>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Employee">
             <input className="input" value={employee} onChange={(e) => setEmployee(e.target.value)} />
@@ -177,7 +180,7 @@ export default function OrderForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Buyer Info</h2>
+        <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Buyer Info</h2>
         <Field label="Shipping Address (paste the entire block from the marketplace)">
           <textarea
             className="input"
@@ -188,7 +191,7 @@ export default function OrderForm({
           />
         </Field>
         {parsedPreview && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted">
             Parsed: {parsedPreview.addressLine ?? "—"}, {parsedPreview.city ?? "—"},{" "}
             {parsedPreview.state ?? "—"} {parsedPreview.zip ?? ""} · {parsedPreview.country ?? "—"} ·{" "}
             {parsedPreview.contactNo ?? "—"}
@@ -207,7 +210,7 @@ export default function OrderForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Product Info</h2>
+        <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Product Info</h2>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Category">
             <input className="input" value={category} onChange={(e) => setCategory(e.target.value)} />
@@ -277,7 +280,7 @@ export default function OrderForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Pricing</h2>
+        <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Pricing</h2>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Sold Price (USD)">
             <input
@@ -303,7 +306,7 @@ export default function OrderForm({
       </section>
 
       <section className="space-y-3">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wide">Production</h2>
+        <h2 className="font-semibold text-sm text-muted uppercase tracking-wide">Production</h2>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Priority">
             <select className="input" value={priority} onChange={(e) => setPriority(e.target.value)}>
@@ -320,14 +323,14 @@ export default function OrderForm({
         </div>
       </section>
 
-      {error && <p className="text-red-600 text-sm">{error}</p>}
-      {saved && !error && <p className="text-green-700 text-sm">Saved.</p>}
+      {error && <p className="text-danger text-sm">{error}</p>}
+      {saved && !error && <p className="text-success text-sm">Saved.</p>}
 
       <div className="flex justify-end gap-2 pt-2">
         <button
           type="submit"
           disabled={submitting}
-          className="px-5 py-2 rounded bg-black text-white text-sm hover:bg-gray-800 disabled:opacity-50"
+          className="px-5 py-2 rounded-md bg-gold text-navy text-sm font-medium hover:bg-gold-dark disabled:opacity-50"
         >
           {submitting ? "Saving..." : mode === "edit" ? "Save Changes" : "Save Order"}
         </button>
@@ -336,10 +339,16 @@ export default function OrderForm({
       <style jsx global>{`
         .input {
           width: 100%;
-          border: 1px solid #d1d5db;
+          border: 1px solid var(--color-border-warm);
+          background: var(--color-cream);
           border-radius: 0.375rem;
           padding: 0.5rem 0.75rem;
           font-size: 0.875rem;
+        }
+        .input:focus {
+          outline: none;
+          border-color: var(--color-gold);
+          box-shadow: 0 0 0 1px var(--color-gold);
         }
       `}</style>
     </form>
@@ -349,7 +358,7 @@ export default function OrderForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block space-y-1">
-      <span className="text-xs text-gray-600">{label}</span>
+      <span className="text-xs text-muted">{label}</span>
       {children}
     </label>
   );

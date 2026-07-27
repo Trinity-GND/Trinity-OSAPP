@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-export default function LogoutButton() {
+export default function LogoutButton({ variant = "light" }: { variant?: "light" | "dark" }) {
   const router = useRouter();
 
   async function logout() {
@@ -14,7 +14,11 @@ export default function LogoutButton() {
   return (
     <button
       onClick={logout}
-      className="px-4 py-2 rounded-lg border border-gray-300 text-sm hover:bg-gray-100"
+      className={
+        variant === "dark"
+          ? "text-sm text-gold hover:text-gold-dark underline underline-offset-2"
+          : "px-4 py-2 rounded-lg border border-border-warm text-sm hover:bg-cream"
+      }
     >
       Log out
     </button>

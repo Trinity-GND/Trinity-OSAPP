@@ -85,11 +85,11 @@ export default function TeamPanel() {
 
   return (
     <div className="space-y-3">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
-      <div className="border rounded overflow-x-auto">
+      <div className="border border-border-warm rounded-lg overflow-x-auto bg-card">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-left text-xs text-gray-500">
+          <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
             <tr>
               <th className="p-2">Name</th>
               <th className="p-2">Role</th>
@@ -100,11 +100,11 @@ export default function TeamPanel() {
           </thead>
           <tbody>
             {members.map((m) => (
-              <tr key={m.id} className="border-t">
+              <tr key={m.id} className="border-t border-border-warm">
                 <td className="p-2">{m.name}</td>
                 <td className="p-2">
                   <select
-                    className="border rounded px-2 py-1 text-xs"
+                    className="border border-border-warm bg-cream rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-gold"
                     value={m.role}
                     onChange={(e) => updateMember(m.id, { role: e.target.value })}
                   >
@@ -115,7 +115,7 @@ export default function TeamPanel() {
                 <td className="p-2">
                   <button
                     onClick={() => updateMember(m.id, { active: !m.active })}
-                    className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100"
+                    className="text-xs px-2 py-1 rounded-md border border-border-warm hover:bg-cream"
                   >
                     {m.active ? "Active" : "Inactive"}
                   </button>
@@ -126,7 +126,7 @@ export default function TeamPanel() {
                 <td className="p-2">
                   <button
                     onClick={() => setRemoving(m)}
-                    className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100 text-red-600"
+                    className="text-xs px-2 py-1 rounded-md border border-danger/30 hover:bg-danger-bg text-danger"
                   >
                     Remove
                   </button>
@@ -137,24 +137,31 @@ export default function TeamPanel() {
         </table>
       </div>
 
-      <form onSubmit={addMember} className="flex flex-wrap items-end gap-2 border rounded p-3">
+      <form
+        onSubmit={addMember}
+        className="flex flex-wrap items-end gap-2 border border-border-warm bg-card rounded-lg p-3"
+      >
         <div>
-          <label className="block text-xs text-gray-500">Name</label>
-          <input className="border rounded px-2 py-1 text-sm" value={name} onChange={(e) => setName(e.target.value)} />
+          <label className="block text-xs text-muted">Name</label>
+          <input
+            className="border border-border-warm bg-cream rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
         <div>
-          <label className="block text-xs text-gray-500">4-digit PIN</label>
+          <label className="block text-xs text-muted">4-digit PIN</label>
           <input
-            className="border rounded px-2 py-1 text-sm w-24"
+            className="border border-border-warm bg-cream rounded-md px-2 py-1 text-sm w-24 focus:outline-none focus:ring-1 focus:ring-gold"
             value={pin}
             maxLength={4}
             onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-500">Role</label>
+          <label className="block text-xs text-muted">Role</label>
           <select
-            className="border rounded px-2 py-1 text-sm"
+            className="border border-border-warm bg-cream rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             value={role}
             onChange={(e) => setRole(e.target.value as "owner" | "employee")}
           >
@@ -165,7 +172,7 @@ export default function TeamPanel() {
         <button
           type="submit"
           disabled={adding}
-          className="text-sm px-3 py-1.5 rounded bg-black text-white hover:bg-gray-800 disabled:opacity-50"
+          className="text-sm px-3 py-1.5 rounded-md bg-gold text-navy font-medium hover:bg-gold-dark disabled:opacity-50"
         >
           {adding ? "Adding..." : "Add Team Member"}
         </button>
@@ -193,7 +200,7 @@ function ResetPin({ onReset }: { onReset: (pin: string) => void }) {
     return (
       <button
         onClick={() => setEditing(true)}
-        className="text-xs px-2 py-1 rounded border border-gray-300 hover:bg-gray-100"
+        className="text-xs px-2 py-1 rounded-md border border-border-warm hover:bg-cream"
       >
         Set new PIN
       </button>
@@ -203,7 +210,7 @@ function ResetPin({ onReset }: { onReset: (pin: string) => void }) {
   return (
     <div className="flex items-center gap-1">
       <input
-        className="border rounded px-2 py-1 text-xs w-16"
+        className="border border-border-warm bg-cream rounded-md px-2 py-1 text-xs w-16 focus:outline-none focus:ring-1 focus:ring-gold"
         value={value}
         maxLength={4}
         onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
@@ -216,7 +223,7 @@ function ResetPin({ onReset }: { onReset: (pin: string) => void }) {
             setValue("");
           }
         }}
-        className="text-xs px-2 py-1 rounded bg-black text-white"
+        className="text-xs px-2 py-1 rounded-md bg-gold text-navy font-medium"
       >
         Save
       </button>

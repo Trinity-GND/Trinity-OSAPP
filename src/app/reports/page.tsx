@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import Nav from "@/components/nav";
+import AppShell from "@/components/app-shell";
 import ReportsView from "@/components/reports/reports-view";
 
 export default async function ReportsPage() {
@@ -9,9 +9,8 @@ export default async function ReportsPage() {
   if (session.role !== "owner") redirect("/dashboard");
 
   return (
-    <div>
-      <Nav />
+    <AppShell>
       <ReportsView />
-    </div>
+    </AppShell>
   );
 }

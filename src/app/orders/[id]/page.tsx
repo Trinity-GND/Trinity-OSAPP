@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import Nav from "@/components/nav";
+import AppShell from "@/components/app-shell";
 import OrderDetail from "@/components/orders/order-detail";
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -9,9 +9,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const { id } = await params;
 
   return (
-    <div>
-      <Nav />
+    <AppShell>
       <OrderDetail orderId={id} role={session.role} defaultEmployee={session.name} />
-    </div>
+    </AppShell>
   );
 }

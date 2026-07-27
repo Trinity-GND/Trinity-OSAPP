@@ -63,7 +63,7 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
     <div className="flex items-center gap-2">
       <a
         href="/api/orders/export"
-        className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100"
+        className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream"
       >
         Export CSV
       </a>
@@ -71,7 +71,7 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={importing}
-        className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+        className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream disabled:opacity-50"
       >
         {importing ? "Importing..." : "Import CSV"}
       </button>
@@ -79,7 +79,7 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
         type="button"
         onClick={downloadShippingSheet}
         disabled={sheetLoading}
-        className="text-xs px-3 py-1.5 rounded border border-gray-300 hover:bg-gray-100 disabled:opacity-50"
+        className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream disabled:opacity-50"
       >
         {sheetLoading ? "Building..." : "Shipping Sheet"}
       </button>
@@ -93,9 +93,9 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
           if (file) handleFile(file);
         }}
       />
-      {message && <span className="text-xs text-green-700">{message}</span>}
-      {error && <span className="text-xs text-red-600">{error}</span>}
-      {sheetMessage && <span className="text-xs text-gray-600">{sheetMessage}</span>}
+      {message && <span className="text-xs text-success">{message}</span>}
+      {error && <span className="text-xs text-danger">{error}</span>}
+      {sheetMessage && <span className="text-xs text-muted">{sheetMessage}</span>}
     </div>
   );
 }

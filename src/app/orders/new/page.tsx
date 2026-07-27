@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
-import Nav from "@/components/nav";
+import AppShell from "@/components/app-shell";
 import OrderForm from "@/components/orders/order-form";
 
 export default async function NewOrderPage() {
@@ -8,9 +8,8 @@ export default async function NewOrderPage() {
   if (!session) redirect("/login");
 
   return (
-    <div>
-      <Nav />
+    <AppShell>
       <OrderForm role={session.role} defaultEmployee={session.name} />
-    </div>
+    </AppShell>
   );
 }

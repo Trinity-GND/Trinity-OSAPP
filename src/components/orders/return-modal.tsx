@@ -45,13 +45,13 @@ export default function ReturnModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4">
-        <h2 className="text-lg font-semibold">Mark {jobId} as returned</h2>
+      <div className="bg-card rounded-lg p-6 w-full max-w-md space-y-4 border border-border-warm">
+        <h2 className="font-display text-lg font-bold text-ink">Mark {jobId} as returned</h2>
 
         <div>
-          <label className="text-sm font-medium">Return reason (required)</label>
+          <label className="text-sm font-medium text-ink">Return reason (required)</label>
           <textarea
-            className="w-full border rounded px-3 py-2 mt-1 text-sm"
+            className="w-full border border-border-warm bg-cream rounded-md px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             rows={2}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
@@ -59,9 +59,9 @@ export default function ReturnModal({
         </div>
 
         <div>
-          <label className="text-sm font-medium">Refund type</label>
+          <label className="text-sm font-medium text-ink">Refund type</label>
           <select
-            className="w-full border rounded px-3 py-2 mt-1 text-sm"
+            className="w-full border border-border-warm bg-cream rounded-md px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
             value={refundType}
             onChange={(e) => setRefundType(e.target.value)}
           >
@@ -73,30 +73,30 @@ export default function ReturnModal({
 
         {refundType === "partial" && (
           <div>
-            <label className="text-sm font-medium">Refund amount (USD)</label>
+            <label className="text-sm font-medium text-ink">Refund amount (USD)</label>
             <input
               type="number"
-              className="w-full border rounded px-3 py-2 mt-1 text-sm"
+              className="w-full border border-border-warm bg-cream rounded-md px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-1 focus:ring-gold"
               value={refundAmount}
               onChange={(e) => setRefundAmount(e.target.value)}
             />
           </div>
         )}
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-danger text-sm">{error}</p>}
 
         <div className="flex justify-end gap-2 pt-2">
           <button
             onClick={onClose}
             disabled={submitting}
-            className="px-4 py-2 text-sm rounded border border-gray-300 hover:bg-gray-100"
+            className="px-4 py-2 text-sm rounded-md border border-border-warm hover:bg-cream"
           >
             Cancel
           </button>
           <button
             onClick={submit}
             disabled={submitting}
-            className="px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+            className="px-4 py-2 text-sm rounded-md bg-danger text-white hover:opacity-90 disabled:opacity-50"
           >
             {submitting ? "Saving..." : "Mark Returned"}
           </button>
