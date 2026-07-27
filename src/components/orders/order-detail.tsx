@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Order, Stage, STAGE_LABELS } from "@/types/order";
 import { Costing } from "@/lib/costing";
 import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import OrderForm from "./order-form";
 import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
+import DeleteOrderModal from "./delete-order-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
 
 export default function OrderDetail({
@@ -26,7 +28,9 @@ export default function OrderDetail({
   const [advancing, setAdvancing] = useState<Stage | null>(null);
   const [confirming, setConfirming] = useState<Stage | null>(null);
   const [returning, setReturning] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const router = useRouter();
 
   const load = useCallback(async () => {
     try {
@@ -189,6 +193,23 @@ export default function OrderDetail({
         onSaved={(updated) => setOrder(updated)}
       />
 
+      {role === "owner" && (
+        <div className="border border-red-200 rounded p-3 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-red-700">Danger zone</p>
+            <p className="text-xs text-gray-500">
+              Permanently delete this order. For cleaning up test/trial orders only.
+            </p>
+          </div>
+          <button
+            onClick={() => setDeleting(true)}
+            className="text-sm px-3 py-1.5 rounded border border-red-300 text-red-700 hover:bg-red-50"
+          >
+            Delete Order
+          </button>
+        </div>
+      )}
+
       {advancing && (
         <FinalWeightModal
           jobId={order.id}
@@ -226,6 +247,21 @@ export default function OrderDetail({
             if (!res.ok) throw new Error(body.error ?? "Failed to save return");
             setOrder(body.order);
             setReturning(false);
+          }}
+        />
+      )}
+
+      {deleting && (
+        <DeleteOrderModal
+          jobId={order.id}
+          onClose={() => setDeleting(false)}
+          onConfirm={async () => {
+            const res = await fetch(`/api/orders/${orderId}`, { method: "DELETE" });
+            if (!res.ok) {
+              const body = await res.json();
+              throw new Error(body.error ?? "Failed to delete order");
+            }
+            router.push("/orders");
           }}
         />
       )}

@@ -6,6 +6,7 @@ import { Order, STAGES, STAGE_LABELS, Stage } from "@/types/order";
 import { nextStage, statusLabel, delayLabel } from "@/lib/orders/pipeline";
 import ReturnModal from "./return-modal";
 import FinalWeightModal from "./final-weight-modal";
+import DeleteOrderModal from "./delete-order-modal";
 import ConfirmModal from "@/components/ui/confirm-modal";
 import CsvTools from "./csv-tools";
 import OrdersReportButton from "./orders-report-button";
@@ -31,6 +32,7 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
   const [advancing, setAdvancing] = useState<{ order: Order; stage: Stage } | null>(null);
   const [confirming, setConfirming] = useState<{ order: Order; stage: Stage } | null>(null);
   const [returning, setReturning] = useState<Order | null>(null);
+  const [deleting, setDeleting] = useState<Order | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -232,19 +234,20 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
               <th className="p-2">Delay</th>
               <th className="p-2">Next Step</th>
               <th className="p-2"></th>
+              {role === "owner" && <th className="p-2"></th>}
             </tr>
           </thead>
           <tbody>
             {loading && orders.length === 0 && (
               <tr>
-                <td colSpan={13} className="p-4 text-center text-gray-400">
+                <td colSpan={14} className="p-4 text-center text-gray-400">
                   Loading...
                 </td>
               </tr>
             )}
             {!loading && orders.length === 0 && (
               <tr>
-                <td colSpan={13} className="p-4 text-center text-gray-400">
+                <td colSpan={14} className="p-4 text-center text-gray-400">
                   No orders yet.
                 </td>
               </tr>
@@ -314,6 +317,16 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
                       View
                     </Link>
                   </td>
+                  {role === "owner" && (
+                    <td className="p-2">
+                      <button
+                        onClick={() => setDeleting(order)}
+                        className="text-xs px-2 py-1 rounded border border-red-300 text-red-700 hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  )}
                 </tr>
               );
             })}
@@ -349,6 +362,22 @@ export default function OrdersList({ role }: { role: "owner" | "employee" }) {
           soldPrice={returning.soldPrice}
           onClose={() => setReturning(null)}
           onSubmit={submitReturn}
+        />
+      )}
+
+      {deleting && (
+        <DeleteOrderModal
+          jobId={deleting.id}
+          onClose={() => setDeleting(null)}
+          onConfirm={async () => {
+            const res = await fetch(`/api/orders/${deleting.id}`, { method: "DELETE" });
+            if (!res.ok) {
+              const body = await res.json();
+              throw new Error(body.error ?? "Failed to delete order");
+            }
+            setOrders((prev) => prev.filter((o) => o.id !== deleting.id));
+            setDeleting(null);
+          }}
         />
       )}
     </div>
