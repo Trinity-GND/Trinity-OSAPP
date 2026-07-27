@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { parseShippingAddress } from "@/lib/address-parser";
 import { Order, OrderType } from "@/types/order";
 import ImageUpload from "./image-upload";
@@ -71,6 +71,16 @@ export default function OrderForm({
   const [submitting, setSubmitting] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  const [clients, setClients] = useState<{ code: string; name: string }[]>([]);
+  useEffect(() => {
+    if (orderType !== "offline") return;
+    fetch("/api/clients")
+      .then((r) => r.json())
+      .then((body) => setClients(body.clients ?? []))
+      .catch(() => {});
+  }, [orderType]);
+  const matchedClient = clients.find((c) => c.code.toLowerCase() === brand.trim().toLowerCase());
+
   const parsedPreview = useMemo(
     () => (shippingAddress.trim() ? parseShippingAddress(shippingAddress) : null),
     [shippingAddress],
@@ -94,8 +104,8 @@ export default function OrderForm({
       orderType,
       employee,
       brand,
-      marketplace,
-      platformOrderNumber,
+      marketplace: orderType === "online" ? marketplace : null,
+      platformOrderNumber: orderType === "online" ? platformOrderNumber : null,
       orderDate,
       buyerName,
       shippingAddress,
@@ -176,25 +186,47 @@ export default function OrderForm({
           <Field label="Employee">
             <input className="input" value={employee} onChange={(e) => setEmployee(e.target.value)} />
           </Field>
-          <Field label="Brand">
-            <input className="input" value={brand} onChange={(e) => setBrand(e.target.value)} />
-          </Field>
-          <Field label="Marketplace">
-            <select className="input" value={marketplace} onChange={(e) => setMarketplace(e.target.value)}>
-              {MARKETPLACES.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Platform Order #">
+          <Field label={orderType === "offline" ? "Brand / Client Code" : "Brand"}>
             <input
               className="input"
-              value={platformOrderNumber}
-              onChange={(e) => setPlatformOrderNumber(e.target.value)}
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              list={orderType === "offline" ? "client-codes" : undefined}
+              placeholder={orderType === "offline" ? "e.g. GSC" : undefined}
             />
+            {orderType === "offline" && (
+              <datalist id="client-codes">
+                {clients.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.code} — {c.name}
+                  </option>
+                ))}
+              </datalist>
+            )}
+            {orderType === "offline" && matchedClient && (
+              <p className="text-xs text-success mt-1">{matchedClient.name}</p>
+            )}
           </Field>
+          {orderType === "online" && (
+            <>
+              <Field label="Marketplace">
+                <select className="input" value={marketplace} onChange={(e) => setMarketplace(e.target.value)}>
+                  {MARKETPLACES.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Platform Order #">
+                <input
+                  className="input"
+                  value={platformOrderNumber}
+                  onChange={(e) => setPlatformOrderNumber(e.target.value)}
+                />
+              </Field>
+            </>
+          )}
           <Field label="Order Date">
             <input
               type="date"

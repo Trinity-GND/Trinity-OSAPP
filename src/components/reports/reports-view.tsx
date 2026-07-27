@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import TeamPanel from "./team-panel";
 import AccessLogPanel from "./access-log-panel";
 import PayrollPanel from "./payroll-panel";
+import ClientsPanel from "./clients-panel";
 
 type ReportData = {
   summary: {
@@ -251,6 +252,13 @@ export default function ReportsView() {
       <section className="space-y-2">
         <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">Team Access</h2>
         <TeamPanel />
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-sm font-semibold text-muted uppercase tracking-wide">
+          Clients (Offline Orders)
+        </h2>
+        <ClientsPanel />
       </section>
 
       <section className="space-y-2">
