@@ -3,8 +3,8 @@ import { getServiceSupabase } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth/require";
 import { rowToOrder } from "@/lib/orders/map";
 
-function escapeCell(value: string | null): string {
-  const s = value ?? "";
+function escapeCell(value: string | number | null): string {
+  const s = value == null ? "" : String(value);
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
@@ -24,9 +24,19 @@ export async function GET() {
   const eligible = orders.filter((o) => o.finalWeight != null);
   const skipped = orders.length - eligible.length;
 
-  const header = "Job ID,Buyer Name,Shipping Address";
-  const rows = eligible.map(
-    (o) => `${escapeCell(o.id)},${escapeCell(o.buyerName)},${escapeCell(o.shippingAddress)}`,
+  const header = "SR NO,BUYER NAME,ADDRES,CITY,STATE,ZIP CODE,COUNTRY,CONTACT NO,CONTENT";
+  const rows = eligible.map((o, i) =>
+    [
+      i + 1,
+      escapeCell(o.buyerName),
+      escapeCell(o.addressLine),
+      escapeCell(o.city),
+      escapeCell(o.state),
+      escapeCell(o.zip),
+      escapeCell(o.country),
+      escapeCell(o.contactNo),
+      escapeCell(o.category),
+    ].join(","),
   );
   const csv = [header, ...rows].join("\n");
 
