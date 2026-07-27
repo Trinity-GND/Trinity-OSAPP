@@ -142,7 +142,7 @@ export default function OrderForm({
         onSaved?.(body.order);
         router.refresh();
       } else {
-        router.push(`/orders/${body.order.id}`);
+        router.push(`/orders?orderType=${body.order.orderType}`);
         return;
       }
     } catch (e) {
