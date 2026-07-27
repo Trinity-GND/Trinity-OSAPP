@@ -147,6 +147,11 @@ export default function OrdersList({ role, orderType }: { role: "owner" | "emplo
     });
   }
 
+  function toggleSelectAll() {
+    const allSelected = orders.length > 0 && orders.every((o) => selected.has(o.id));
+    setSelected(allSelected ? new Set() : new Set(orders.map((o) => o.id)));
+  }
+
   return (
     <div className="p-4 sm:p-6 space-y-4">
       <div className="flex items-center justify-between">
@@ -236,7 +241,14 @@ export default function OrdersList({ role, orderType }: { role: "owner" | "emplo
         <table className="w-full text-sm">
           <thead className="bg-cream text-left text-xs text-muted uppercase tracking-wide">
             <tr>
-              <th className="p-2 w-8"></th>
+              <th className="p-2 w-8">
+                <input
+                  type="checkbox"
+                  checked={orders.length > 0 && orders.every((o) => selected.has(o.id))}
+                  onChange={toggleSelectAll}
+                  aria-label="Select all"
+                />
+              </th>
               <th className="p-2 w-14">Photo</th>
               <th className="p-2">Job ID</th>
               <th className="p-2">Platform Order #</th>
