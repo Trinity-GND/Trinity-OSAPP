@@ -7,8 +7,8 @@ export default async function Nav() {
   if (!session) return null;
 
   return (
-    <nav className="border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-6">
+    <nav className="border-b border-gray-200 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-y-2 gap-x-4">
+      <div className="flex items-center gap-3 sm:gap-6 flex-wrap">
         <span className="font-semibold">Trinity OS</span>
         <Link href="/dashboard" className="text-sm hover:underline">
           Dashboard
@@ -25,8 +25,8 @@ export default async function Nav() {
           </Link>
         )}
       </div>
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-500">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <span className="text-sm text-gray-500 whitespace-nowrap">
           {session.name} ({session.role})
         </span>
         <LogoutButton />
