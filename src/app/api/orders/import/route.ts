@@ -16,7 +16,15 @@ export async function POST(req: NextRequest) {
 
   const text = await file.text();
   const rows = csvToOrders(text);
-  const ids = rows.map((r) => r.id).filter(Boolean) as string[];
+
+  // Rows with a Job ID already assigned get deduplicated against what's in
+  // the database (the "safety net, not a sync tool" behavior). Rows with no
+  // ID at all are genuinely new records (e.g. converted from an external
+  // sheet that never had our IDs) -- those always import and get a fresh
+  // JOB-NNNNNN assigned by the database, they're never dropped.
+  const rowsWithId = rows.filter((r) => r.id);
+  const rowsWithoutId = rows.filter((r) => !r.id);
+  const ids = rowsWithId.map((r) => r.id) as string[];
 
   const supabase = getServiceSupabase();
   const { data: existing, error: existingError } = await supabase
@@ -29,7 +37,8 @@ export async function POST(req: NextRequest) {
   }
 
   const existingIds = new Set((existing ?? []).map((r) => r.id));
-  const newRows = rows.filter((r) => r.id && !existingIds.has(r.id as string));
+  const newRowsWithId = rowsWithId.filter((r) => !existingIds.has(r.id as string));
+  const newRows = [...newRowsWithId, ...rowsWithoutId];
 
   if (session.role !== "owner") {
     for (const r of newRows) delete r.materialCost;
@@ -37,7 +46,11 @@ export async function POST(req: NextRequest) {
 
   let imported = 0;
   if (newRows.length > 0) {
-    const dbRows = newRows.map((r) => ({ ...orderToRow(r), id: r.id }));
+    const dbRows = newRows.map((r) => {
+      const row = orderToRow(r);
+      if (r.id) row.id = r.id;
+      return row;
+    });
     const { error: insertError, count } = await supabase.from("orders").insert(dbRows, { count: "exact" });
     if (insertError) {
       return NextResponse.json({ error: insertError.message }, { status: 500 });
@@ -47,7 +60,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     imported,
-    skipped: rows.length - newRows.length,
+    skipped: rowsWithId.length - newRowsWithId.length,
     total: rows.length,
   });
 }
