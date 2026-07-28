@@ -222,7 +222,7 @@ export default function OrdersList({ role, orderType }: { role: "owner" | "emplo
         )}
         <div className="ml-auto flex items-center gap-2">
           <OrdersReportButton selectedIds={Array.from(selected)} />
-          <CsvTools onImported={load} />
+          <CsvTools onImported={load} selectedIds={Array.from(selected)} />
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { requireSession } from "@/lib/auth/require";
 import { rowToOrder } from "@/lib/orders/map";
@@ -9,12 +9,21 @@ function escapeCell(value: string | number | null): string {
   return s;
 }
 
-export async function GET() {
+export async function POST(req: NextRequest) {
   const session = await requireSession();
   if (session instanceof NextResponse) return session;
 
+  const { ids } = await req.json();
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return NextResponse.json({ error: "Select at least one order first" }, { status: 400 });
+  }
+
   const supabase = getServiceSupabase();
-  const { data, error } = await supabase.from("orders").select("*").eq("cancelled", false);
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("cancelled", false)
+    .in("id", ids);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

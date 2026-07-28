@@ -2,7 +2,13 @@
 
 import { useRef, useState } from "react";
 
-export default function CsvTools({ onImported }: { onImported: () => void }) {
+export default function CsvTools({
+  onImported,
+  selectedIds,
+}: {
+  onImported: () => void;
+  selectedIds: string[];
+}) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [importing, setImporting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -12,10 +18,18 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
   const [sheetLoading, setSheetLoading] = useState(false);
 
   async function downloadShippingSheet() {
+    if (selectedIds.length === 0) {
+      setSheetMessage("Select at least one order first.");
+      return;
+    }
     setSheetLoading(true);
     setSheetMessage(null);
     try {
-      const res = await fetch("/api/orders/shipping-sheet");
+      const res = await fetch("/api/orders/shipping-sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? "Failed to build shipping sheet");
 
@@ -78,10 +92,11 @@ export default function CsvTools({ onImported }: { onImported: () => void }) {
       <button
         type="button"
         onClick={downloadShippingSheet}
-        disabled={sheetLoading}
+        disabled={sheetLoading || selectedIds.length === 0}
+        title={selectedIds.length === 0 ? "Select orders in the list first" : undefined}
         className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream disabled:opacity-50"
       >
-        {sheetLoading ? "Building..." : "Shipping Sheet"}
+        {sheetLoading ? "Building..." : `Shipping Sheet${selectedIds.length > 0 ? ` (${selectedIds.length})` : ""}`}
       </button>
       <input
         ref={inputRef}
