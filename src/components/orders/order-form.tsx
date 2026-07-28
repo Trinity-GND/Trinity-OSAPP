@@ -5,16 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import { parseShippingAddress } from "@/lib/address-parser";
 import { Order, OrderType } from "@/types/order";
 import ImageUpload from "./image-upload";
+import DateInput from "./date-input";
 
 const MARKETPLACES = ["Etsy", "Amazon", "Shopify", "Walmart", "eBay", "Instagram-DM", "Other"];
 const METAL_KTS = ["Sterling Silver", "9KT", "10KT", "14KT", "18KT"];
 const METAL_COLORS = ["White", "Rose", "Yellow"];
 const STONE_QUALITIES = ["Cubic Zirconia", "Moissanite", "Lab Grown", "Natural"];
 const PRIORITIES = ["Normal", "High", "Urgent"];
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function OrderForm({
   role,
@@ -40,7 +37,7 @@ export default function OrderForm({
   const [brand, setBrand] = useState(initialOrder?.brand ?? "");
   const [marketplace, setMarketplace] = useState<string>(initialOrder?.marketplace ?? "Etsy");
   const [platformOrderNumber, setPlatformOrderNumber] = useState(initialOrder?.platformOrderNumber ?? "");
-  const [orderDate, setOrderDate] = useState(initialOrder?.orderDate ?? todayISO());
+  const [orderDate, setOrderDate] = useState(initialOrder?.orderDate ?? "");
 
   const [buyerName, setBuyerName] = useState(initialOrder?.buyerName ?? "");
   const [buyerNameTouched, setBuyerNameTouched] = useState(mode === "edit");
@@ -49,7 +46,7 @@ export default function OrderForm({
   const [category, setCategory] = useState(initialOrder?.category ?? "");
   const [sku, setSku] = useState(initialOrder?.sku ?? "");
   const [imagePath, setImagePath] = useState<string | null>(initialOrder?.imagePath ?? null);
-  const [metalKt, setMetalKt] = useState<string>(initialOrder?.metalKt ?? "14KT");
+  const [metalKt, setMetalKt] = useState<string>(initialOrder?.metalKt ?? "Sterling Silver");
   const [metalColor, setMetalColor] = useState<string>(initialOrder?.metalColor ?? "Yellow");
   const [stoneQuality, setStoneQuality] = useState<string>(initialOrder?.stoneQuality ?? "Moissanite");
   const [size, setSize] = useState(initialOrder?.size ?? "");
@@ -97,6 +94,12 @@ export default function OrderForm({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (!orderDate) {
+      setError("Enter the order date (day and month)");
+      return;
+    }
+
     setSubmitting(true);
     setSaved(false);
 
@@ -227,13 +230,8 @@ export default function OrderForm({
               </Field>
             </>
           )}
-          <Field label="Order Date">
-            <input
-              type="date"
-              className="input"
-              value={orderDate}
-              onChange={(e) => setOrderDate(e.target.value)}
-            />
+          <Field label="Order Date (dd/mm/yyyy)">
+            <DateInput value={orderDate} onChange={setOrderDate} />
           </Field>
         </div>
       </section>
@@ -376,8 +374,8 @@ export default function OrderForm({
               ))}
             </select>
           </Field>
-          <Field label="Ship By">
-            <input type="date" className="input" value={shipBy} onChange={(e) => setShipBy(e.target.value)} />
+          <Field label="Ship By (dd/mm/yyyy)">
+            <DateInput value={shipBy} onChange={setShipBy} />
           </Field>
         </div>
       </section>
