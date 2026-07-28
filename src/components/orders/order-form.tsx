@@ -13,6 +13,10 @@ const METAL_COLORS = ["White", "Rose", "Yellow"];
 const STONE_QUALITIES = ["Cubic Zirconia", "Moissanite", "Lab Grown", "Natural"];
 const PRIORITIES = ["Normal", "High", "Urgent"];
 
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export default function OrderForm({
   role,
   defaultEmployee,
@@ -37,7 +41,7 @@ export default function OrderForm({
   const [brand, setBrand] = useState(initialOrder?.brand ?? "");
   const [marketplace, setMarketplace] = useState<string>(initialOrder?.marketplace ?? "Etsy");
   const [platformOrderNumber, setPlatformOrderNumber] = useState(initialOrder?.platformOrderNumber ?? "");
-  const [orderDate, setOrderDate] = useState(initialOrder?.orderDate ?? "");
+  const [orderDate, setOrderDate] = useState(initialOrder?.orderDate ?? todayISO());
 
   const [buyerName, setBuyerName] = useState(initialOrder?.buyerName ?? "");
   const [buyerNameTouched, setBuyerNameTouched] = useState(mode === "edit");
@@ -94,12 +98,6 @@ export default function OrderForm({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-
-    if (!orderDate) {
-      setError("Enter the order date (day and month)");
-      return;
-    }
-
     setSubmitting(true);
     setSaved(false);
 
@@ -230,8 +228,13 @@ export default function OrderForm({
               </Field>
             </>
           )}
-          <Field label="Order Date (dd/mm/yyyy)">
-            <DateInput value={orderDate} onChange={setOrderDate} />
+          <Field label="Order Date">
+            <input
+              type="date"
+              className="input"
+              value={orderDate}
+              onChange={(e) => setOrderDate(e.target.value)}
+            />
           </Field>
         </div>
       </section>
