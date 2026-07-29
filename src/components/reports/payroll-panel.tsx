@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import ReceiptScanButton from "./receipt-scan-button";
 
 type PayrollEntry = {
   id: string;
@@ -11,7 +12,7 @@ type PayrollEntry = {
   advance: number;
 };
 
-type ExpenseEntry = { id: string; category: string; amount: number };
+type ExpenseEntry = { id: string; category: string; amount: number; receipt_image_path: string | null };
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -203,6 +204,7 @@ export default function PayrollPanel() {
               <tr>
                 <th className="p-2">Category</th>
                 <th className="p-2">Amount</th>
+                <th className="p-2">Receipt</th>
                 <th className="p-2"></th>
               </tr>
             </thead>
@@ -220,6 +222,20 @@ export default function PayrollPanel() {
                     <NumInput value={e.amount} onCommit={(v) => updateExpenseRow(e.id, { amount: v })} />
                   </td>
                   <td className="p-2">
+                    {e.receipt_image_path ? (
+                      <a
+                        href={e.receipt_image_path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-gold-dark hover:underline"
+                      >
+                        View
+                      </a>
+                    ) : (
+                      <span className="text-xs text-muted">—</span>
+                    )}
+                  </td>
+                  <td className="p-2">
                     <button onClick={() => removeExpenseRow(e.id)} className="text-xs text-danger hover:underline">
                       Remove
                     </button>
@@ -229,9 +245,12 @@ export default function PayrollPanel() {
             </tbody>
           </table>
         </div>
-        <button onClick={addExpenseRow} className="mt-2 text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream">
-          + Add Expense
-        </button>
+        <div className="mt-2 flex items-center gap-2">
+          <button onClick={addExpenseRow} className="text-xs px-3 py-1.5 rounded-md border border-border-warm bg-card hover:bg-cream">
+            + Add Expense
+          </button>
+          <ReceiptScanButton year={year} month={month} onSaved={load} />
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4">

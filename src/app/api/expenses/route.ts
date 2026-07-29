@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       month: body.month,
       category: body.category ?? "",
       amount: body.amount ?? 0,
+      receipt_image_path: body.receiptImagePath ?? null,
     })
     .select()
     .single();
